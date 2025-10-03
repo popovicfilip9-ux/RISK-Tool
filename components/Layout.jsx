@@ -1,243 +1,147 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useRisk } from '../contexts/RiskContext';
-import { useRegulatory } from '../contexts/RegulatoryContext';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarHeader, 
-  SidebarMenu, 
-  SidebarMenuItem, 
-  SidebarMenuButton,
-  SidebarProvider,
-  SidebarTrigger
-} from '@/components/ui/sidebar';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { 
-  Shield, 
-  BarChart3, 
-  AlertTriangle, 
-  BookOpen, 
-  Users, 
-  LogOut,
-  Menu,
-  History,
-  FileCheck,
-  Workflow,
-  Download,
-  Settings,
-  Target,
-  Info,
-  X,
-  RotateCcw
-} from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
-  const { user, logout, hasPermission } = useAuth();
-  const { resetToInitialData: resetRisks } = useRisk();
-  const { resetToInitialData: resetReferences } = useRegulatory();
-  const location = useLocation();
-  const [showDemoNotice, setShowDemoNotice] = useState(() => {
-    return localStorage.getItem('gmp-gdp-hide-demo-notice') !== 'true';
-  });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigationItems = [
-    {
-      title: 'Dashboard',
-      icon: BarChart3,
-      href: '/',
-      requiredRole: 'viewer'
-    },
-    {
-      title: 'Risk Management',
-      icon: AlertTriangle,
-      href: '/risks',
-      requiredRole: 'assessor'
-    },
-    {
-      title: 'FMEA Overview',
-      icon: Target,
-      href: '/fmea',
-      requiredRole: 'assessor'
-    },
-    {
-      title: 'Risk Generator',
-      icon: Settings,
-      href: '/generator',
-      requiredRole: 'assessor'
-    },
-    {
-      title: 'Approval Workflows',
-      icon: Workflow,
-      href: '/workflows',
-      requiredRole: 'assessor'
-    },
-    {
-      title: 'Export Center',
-      icon: Download,
-      href: '/export',
-      requiredRole: 'assessor'
-    },
-    {
-      title: 'Regulatory References',
-      icon: BookOpen,
-      href: '/references',
-      requiredRole: 'viewer'
-    },
-    {
-      title: 'User Management',
-      icon: Users,
-      href: '/users',
-      requiredRole: 'administrator'
-    },
-    {
-      title: 'Audit Trail',
-      icon: History,
-      href: '/audit',
-      requiredRole: 'administrator'
-    }
+    { name: 'Dashboard', href: '/', icon: '📊', active: true },
+    { name: 'Risk Management', href: '/risks', icon: '⚠️' },
+    { name: 'FMEA Overview', href: '/fmea', icon: '🔍' },
+    { name: 'Risk Generator', href: '/generator', icon: '⚡' },
+    { name: 'Approval Workflows', href: '/approvals', icon: '✅' },
+    { name: 'Export Center', href: '/export', icon: '📤' },
+    { name: 'Regulatory References', href: '/regulatory', icon: '📚' },
+    { name: 'User Management', href: '/users', icon: '👥' },
+    { name: 'Audit Trail', href: '/audit', icon: '📝' },
   ];
 
-  const filteredNavItems = navigationItems.filter(item => 
-    hasPermission(item.requiredRole)
-  );
-
-  const hideDemoNotice = () => {
-    setShowDemoNotice(false);
-    localStorage.setItem('gmp-gdp-hide-demo-notice', 'true');
-  };
-
-  const resetDemoData = () => {
-    if (window.confirm('This will reset all data to the initial demo state. Are you sure?')) {
-      resetRisks();
-      resetReferences();
-      // Optionally reload the page to ensure all components refresh
+  const resetDemo = () => {
+    if (confirm('Are you sure you want to reset all demo data? This will restore the initial demo state.')) {
+      // Clear localStorage
+      localStorage.clear();
+      // Reload page to reset state
       window.location.reload();
     }
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen bg-gray-50">
-        <Sidebar className="border-r">
-          <SidebarHeader className="border-b p-4">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-blue-600" />
-              <div>
-                <h1 className="font-bold text-lg">GMP/GDP</h1>
-                <p className="text-xs text-muted-foreground">Risk Assessment</p>
-              </div>
-            </div>
-          </SidebarHeader>
-          
-          <SidebarContent>
-            <SidebarMenu>
-              {filteredNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton 
-                    asChild
-                    isActive={location.pathname === item.href}
-                  >
-                    <Link to={item.href} className="flex items-center space-x-2">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+    <div className="app">
+      {/* Demo Banner */}
+      <div className="demo-banner">
+        🎯 <strong>Interactive Demo:</strong> This is a demonstration platform. All data is stored locally in your browser and will persist between sessions on this device.
+        <button 
+          onClick={resetDemo}
+          style={{
+            marginLeft: '1rem',
+            padding: '0.25rem 0.75rem',
+            background: 'rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            borderRadius: '6px',
+            color: 'white',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
+          onMouseOut={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
+        >
+          Reset Demo
+        </button>
+      </div>
+
+      <div className="app-container">
+        {/* Sidebar */}
+        <aside className={`app-sidebar sidebar ${sidebarOpen ? 'open' : ''}`}>
+          <div className="sidebar-header">
+            <div className="sidebar-logo">GMP/GDP</div>
+            <div className="sidebar-subtitle">Risk Assessment</div>
+          </div>
+
+          <nav className="nav-menu">
+            <div className="nav-section">
+              <div className="nav-section-title">Main Navigation</div>
+              {navigationItems.slice(0, 4).map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className={`nav-link ${item.active ? 'active' : ''}`}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  {item.name}
+                </a>
               ))}
-            </SidebarMenu>
-          </SidebarContent>
-        </Sidebar>
-
-        <div className="flex-1 flex flex-col">
-          {/* Demo Notice Banner */}
-          {showDemoNotice && (
-            <Alert className="rounded-none border-l-0 border-r-0 border-t-0 bg-blue-50 border-blue-200">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="flex items-center justify-between">
-                <span className="text-blue-800">
-                  <strong>Interactive Demo:</strong> This is a demonstration platform. All data is stored locally in your browser and will persist between sessions on this device.
-                </span>
-                <div className="flex items-center space-x-2 ml-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={resetDemoData}
-                    className="text-blue-700 border-blue-300 hover:bg-blue-100"
-                  >
-                    <RotateCcw className="h-3 w-3 mr-1" />
-                    Reset Demo
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={hideDemoNotice}
-                    className="text-blue-700 hover:bg-blue-100"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <header className="bg-white border-b px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <SidebarTrigger>
-                <Menu className="h-5 w-5" />
-              </SidebarTrigger>
-              <h2 className="text-xl font-semibold text-gray-800">
-                {navigationItems.find(item => item.href === location.pathname)?.title || 'Dashboard'}
-              </h2>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">{user?.name}</span>
-                <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                  {user?.role}
-                </span>
+
+            <div className="nav-section">
+              <div className="nav-section-title">Management</div>
+              {navigationItems.slice(4, 7).map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="nav-link"
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  {item.name}
+                </a>
+              ))}
+            </div>
+
+            <div className="nav-section">
+              <div className="nav-section-title">Administration</div>
+              {navigationItems.slice(7).map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="nav-link"
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  {item.name}
+                </a>
+              ))}
+            </div>
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="main-content">
+          {/* Header */}
+          <header className="app-header">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="btn btn-secondary"
+                style={{ display: 'none' }}
+                id="mobile-menu-btn"
+              >
+                ☰
+              </button>
+              <h1 className="app-title">Risk Assessment Dashboard</h1>
+            </div>
+
+            <div className="user-info">
+              <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
+                <div style={{ fontWeight: '600', fontSize: '0.875rem' }}>System Administrator</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>administrator</div>
               </div>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
-                        {user?.name?.split(' ').map(n => n[0]).join('') || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuItem onClick={resetDemoData}>
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                    <span>Reset Demo Data</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={logout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="user-avatar">SA</div>
             </div>
           </header>
 
-          <main className="flex-1 overflow-auto p-6">
+          {/* Page Content */}
+          <div className="dashboard-container animate-fade-scale">
             {children}
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
-    </SidebarProvider>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          #mobile-menu-btn {
+            display: block !important;
+          }
+        }
+      `}</style>
+    </div>
   );
 };
 
