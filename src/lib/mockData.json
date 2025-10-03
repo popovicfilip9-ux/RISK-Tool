@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Data breach risk",
+    "description": "Sensitive data exposure",
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "Regulatory non-compliance",
+    "description": "Missed compliance deadline",
+    "status": "pending"
+  },
+  {
+    "id": 3,
+    "title": "System outage",
+    "description": "Unexpected downtime of service",
+    "status": "open"
+  }
+]
