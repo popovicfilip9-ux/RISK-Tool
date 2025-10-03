@@ -6,7 +6,7 @@ export default defineConfig({
   base: '/RISK-Tool/',
   build: {
     rollupOptions: {
-      input: './main.jsx'
+      input: './src/main.jsx'
     }
   }
 })
