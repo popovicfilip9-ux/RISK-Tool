@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: risk-tool-backend
+    env: node
+    plan: free
+    buildCommand: "cd backend && npm install"
+    startCommand: "cd backend && npm start"
+    branch: feature/full-setup
+
+  - type: web
+    name: risk-tool-frontend
+    env: static
+    plan: free
+    buildCommand: "cd frontend && npm install && npm run build"
+    publishCommand: "cd frontend && npm run build"
+    branch: feature/full-setup
