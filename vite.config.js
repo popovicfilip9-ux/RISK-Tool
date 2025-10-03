@@ -7,7 +7,7 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/RISK-Tool/' : '/',
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "."),  // Changed from "./src" to "."
     },
   },
   build: {
